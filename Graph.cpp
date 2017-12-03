@@ -95,6 +95,7 @@ void MainNetwork::sendPath(Car &workingCar ){
 	int destination = -99;
 
 	dijkstra(paths, workingCar.source);
+	workingCar.CurrentPath = paths[workingCar.destination];
 
 	if(workingCar.CurrentPath.empty())
 		destination = workingCar.destination;

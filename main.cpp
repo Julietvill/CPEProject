@@ -10,7 +10,7 @@ int main(int argc, char* argv[]){
 	srand(time(NULL));
 	MainNetwork simulation(argv[1]);
 	Car testing;
-/*
+
 	for( int i = 0; i < 9; i++)
 	{
 		testing.source = rand() % 8;
@@ -24,13 +24,7 @@ int main(int argc, char* argv[]){
 		cout << "From: " << testing.source << " To: " << testing.destination << endl;
 		simulation.addCar( testing );
 	}
-	*/
+	
 
-		testing.source = 2;
-		testing.destination = 0;
-		testing.crash = false;
-		testing.congested = false;
-		cout << "From: " << testing.source << " To: " << testing.destination << endl;
-		simulation.addCar( testing );
 	return 0;
 }
