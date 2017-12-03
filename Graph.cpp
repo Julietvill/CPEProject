@@ -12,7 +12,13 @@
 
 using namespace std;
 
-
+//this is only being used for debugging purposes. Will remove later.
+void printSolution(int dist[], int n)
+{
+printf("Vertex Distance from Source\n");
+for (int i = 0; i < n; i++)
+	printf("%d tt %d\n", i, dist[i]);
+}
 /**
  * @brief 
  *
@@ -65,14 +71,6 @@ MainNetwork::MainNetwork(char* textFile){
 void MainNetwork::addCar( Car newCar ){
 	listOfCars.push_back( newCar );
 	sendPath( newCar );
-}
-
-
-void printSolution(int dist[], int n)
-{
-printf("Vertex Distance from Source\n");
-for (int i = 0; i < n; i++)
-	printf("%d tt %d\n", i, dist[i]);
 }
 
 /**
