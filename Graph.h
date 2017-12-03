@@ -25,7 +25,7 @@ class MainNetwork{
 		MainNetwork(char* fileName);							//this will create the graph
 		void addCar( Car newCar );
 		void sendPath( Car &workingCar );
-		void updatePath(Car &working, bool newSource);
+		void updatePath(int source, int dest, bool newSource);
 		void updateSource();
 
 
@@ -33,7 +33,7 @@ class MainNetwork{
 		Edges graph[9][9];
 		vector<Car> listOfCars;
 
-		int minDistance(int dist[9], bool sptSet[9]);
-		void dijkstra(int dist[9], vector<int> paths[9], int src);
+		int minDistance(Edges dist[9], bool sptSet[9]);
+		void dijkstra(vector<int> paths[9], int src);
 
 };
