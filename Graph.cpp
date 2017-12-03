@@ -45,6 +45,7 @@ MainNetwork::MainNetwork(char* textFile){
 			for(int j = 0; j < 9; j++)
 			{
 				inFile >> graph[i][j].dist;
+				graph[i][j].carCount = 0;
 			}
 		}
 
@@ -95,6 +96,8 @@ void MainNetwork::sendPath(Car &workingCar ){
 
 	dijkstra( dist, paths, workingCar.source);
 	workingCar.CurrentPath = paths[ workingCar.destination ];
+	cout << workingCar.source << " " << workingCar.CurrentPath.front() << endl;
+	updatePath(workingCar.source, workingCar.CurrentPath.front(), false);
 
 	//This is just for debugging purposes
 	printSolution( dist, 9 );
@@ -107,6 +110,7 @@ void MainNetwork::sendPath(Car &workingCar ){
 		}
 		cout << endl;
 	}
+	
 }
 
 
@@ -172,27 +176,43 @@ void MainNetwork::dijkstra(int dist[9], vector<int> paths[9], int src)
 	// Find shortest path for all vertices
 	for (int count = 0; count < 9-1; count++)
 	{
-	// Pick the minimum distance vertex from the set of vertices not
-	// yet processed. u is always equal to src in first iteration.
-	int u = minDistance(dist, sptSet);
+		// Pick the minimum distance vertex from the set of vertices not
+		// yet processed. u is always equal to src in first iteration.
+		int u = minDistance(dist, sptSet);
 
-	// Mark the picked vertex as processed
-	sptSet[u] = true;
+		// Mark the picked vertex as processed
+		sptSet[u] = true;
 
-	// Update dist value of the adjacent vertices of the picked vertex.
-	for (int v = 0; v < 9; v++)
-
-		// Update dist[v] only if is not in sptSet, there is an edge from 
-		// u to v, and total weight of path from src to v through u is 
-		// smaller than current value of dist[v]
-		if (!sptSet[v] && graph[u][v].dist && dist[u] != INT_MAX 
-									&& dist[u]+graph[u][v].dist < dist[v])
+		if( graph[u][src].dist == 0 && u != src)
 		{
-			dist[v] = dist[u] + graph[u][v].dist;
-			paths[v].push_back( u );
+			
+		}
+
+		// Update dist value of the adjacent vertices of the picked vertex.
+		for (int v = 0; v < 9; v++)
+		{
+
+			// Update dist[v] only if is not in sptSet, there is an edge from 
+			// u to v, and total weight of path from src to v through u is 
+			// smaller than current value of dist[v]
+			if (!sptSet[v] && graph[u][v].dist 
+						   && dist[u] != INT_MAX 
+						   && dist[u]+graph[u][v].dist < dist[v])
+			{
+				dist[v] = dist[u] + graph[u][v].dist;
+				if( graph[u][src].dist == 0 && u != src)
+				{
+					paths[v] = paths[u];
+				}
+				if( u != src)
+				{
+					paths[v].push_back( u );
+				}
+			}
 		}
 
 	}
+
 	for(int i = 0; i < 9; i++)
 	{
 		paths[i].push_back( i );
@@ -215,8 +235,17 @@ void MainNetwork::dijkstra(int dist[9], vector<int> paths[9], int src)
  * @return 
  * 
  **/
-void MainNetwork::updatePath(Car &working, bool newSource){
-
+void MainNetwork::updatePath(int source, int dest, bool newSource){
+	if( !newSource )
+	{
+		graph[source][dest].carCount++;
+		graph[dest][source].carCount++;
+	}
+	else
+	{
+		graph[source][dest].carCount--;
+		graph[dest][source].carCount--;
+	}
 }
 
 /**
