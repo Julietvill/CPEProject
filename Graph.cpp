@@ -91,16 +91,19 @@ void MainNetwork::addCar( Car newCar ){
  * 
  **/
 void MainNetwork::sendPath(Car &workingCar ){
-	int dist[9];
 	vector<int> paths[9];
+	int destination = -99;
 
-	dijkstra( dist, paths, workingCar.source);
-	workingCar.CurrentPath = paths[ workingCar.destination ];
-	cout << workingCar.source << " " << workingCar.CurrentPath.front() << endl;
-	updatePath(workingCar.source, workingCar.CurrentPath.front(), false);
+	dijkstra(paths, workingCar.source);
 
+	if(workingCar.CurrentPath.empty())
+		destination = workingCar.destination;
+	else
+		destination = workingCar.CurrentPath.front();
+	updatePath(workingCar.source, destination, false);
+
+/*
 	//This is just for debugging purposes
-	printSolution( dist, 9 );
 	for(int i = 0; i < 9; i++)
 	{
 		cout << "Path " << i << ": " << endl;
@@ -110,7 +113,7 @@ void MainNetwork::sendPath(Car &workingCar ){
 		}
 		cout << endl;
 	}
-	
+*/
 }
 
 
@@ -130,16 +133,18 @@ void MainNetwork::sendPath(Car &workingCar ){
  * @return 
  * 
  **/
-int MainNetwork::minDistance(int dist[], bool sptSet[]){
+int MainNetwork::minDistance(Edges dist[], bool sptSet[]){
 	// Initialize min value
 	int min = INT_MAX, min_index;
 
 	for (int v = 0; v < 9; v++)
 	{
-		if (sptSet[v] == false && dist[v] <= min)
-			min = dist[v], min_index = v;
+		if (sptSet[v] == false && dist[v].dist <= min 
+							   && dist[v].carCount < 9999)
+		{
+			min = dist[v].dist, min_index = v;
+		}
 	}
-
 	return min_index;
 }
 
@@ -160,18 +165,22 @@ int MainNetwork::minDistance(int dist[], bool sptSet[]){
  * @return 
  * 
  **/
-void MainNetwork::dijkstra(int dist[9], vector<int> paths[9], int src)
+void MainNetwork::dijkstra(vector<int> paths[9], int src)
 {
-
+	Edges dist[9];
 	bool sptSet[9]; // sptSet[i] will true if vertex i is included in shortest
 					// path tree or shortest distance from src to i is finalized
 
 	// Initialize all distances as INFINITE and stpSet[] as false
 	for (int i = 0; i < 9; i++)
-		dist[i] = INT_MAX, sptSet[i] = false;
+	{
+		dist[i].dist = INT_MAX;
+		dist[i].carCount = 0;
+		sptSet[i] = false;
+	}
 
 	// Distance of source vertex from itself is always 0
-	dist[src] = 0;
+	dist[src].dist = 0;
 
 	// Find shortest path for all vertices
 	for (int count = 0; count < 9-1; count++)
@@ -179,14 +188,15 @@ void MainNetwork::dijkstra(int dist[9], vector<int> paths[9], int src)
 		// Pick the minimum distance vertex from the set of vertices not
 		// yet processed. u is always equal to src in first iteration.
 		int u = minDistance(dist, sptSet);
-
+		/*
+		for( int i = 0; i < 9; i++)
+		{
+			cout << dist[i].dist << "\t";
+		}
+		cout << endl;
+		*/
 		// Mark the picked vertex as processed
 		sptSet[u] = true;
-
-		if( graph[u][src].dist == 0 && u != src)
-		{
-			
-		}
 
 		// Update dist value of the adjacent vertices of the picked vertex.
 		for (int v = 0; v < 9; v++)
@@ -196,26 +206,24 @@ void MainNetwork::dijkstra(int dist[9], vector<int> paths[9], int src)
 			// u to v, and total weight of path from src to v through u is 
 			// smaller than current value of dist[v]
 			if (!sptSet[v] && graph[u][v].dist 
-						   && dist[u] != INT_MAX 
-						   && dist[u]+graph[u][v].dist < dist[v])
+						   && dist[u].dist != INT_MAX 
+						   && dist[u].dist+graph[u][v].dist < dist[v].dist)
 			{
-				dist[v] = dist[u] + graph[u][v].dist;
+				dist[v].dist = dist[u].dist + graph[u][v].dist;
+				dist[v].carCount = graph[u][v].carCount;
+
 				if( graph[u][src].dist == 0 && u != src)
 				{
 					paths[v] = paths[u];
 				}
+
 				if( u != src)
 				{
+
 					paths[v].push_back( u );
 				}
 			}
 		}
-
-	}
-
-	for(int i = 0; i < 9; i++)
-	{
-		paths[i].push_back( i );
 	}
 }
 
@@ -245,6 +253,15 @@ void MainNetwork::updatePath(int source, int dest, bool newSource){
 	{
 		graph[source][dest].carCount--;
 		graph[dest][source].carCount--;
+	}
+
+	for( int i = 0; i < 9; i++)
+	{
+		for( int j = 0; j < 9; j++)
+		{
+			cout << "<" << graph[i][j].dist << "," << graph[i][j].carCount << ">  ";
+		}
+		cout << endl;
 	}
 }
 
