@@ -9,7 +9,7 @@
  * @version 1.00 
  *          Juliet Villanueva, Casey Garrett, Aaron Dartt (3 December 2017)
  *
- * @Note requires BSTClass.h
+ * @Note requires Graph.h
  */
 
 // Header files ///////////////////////////////////////////////////////////////
@@ -30,19 +30,22 @@ using namespace std;
 
 
 /**
- * @brief 
+ * @brief  Reads in text file to create graph.
  *
- * @details 
- *          
- * @pre 
- *
- * @post 
+ * @details  Takes in pointer to an array of chars which contains the data to
+ *			 create the graph which will be used throughout the program.
  * 
- * @exception 
+ * @pre  Properly formated text file, in the form of a 2D array. 
  *
- * @param [in] 
+ * @post  Creates a graph with statically set dementions. Later in the program
+ *		  Values for the graph are filled in.
+ * 
+ * @exception None.
  *
- * @return 
+ * @param [in]  textFile
+ *				  Array of chars containing data for the creation of the graph.
+ *
+ * @return none
  * 
  **/
 MainNetwork::MainNetwork(char* textFile){
@@ -63,19 +66,22 @@ MainNetwork::MainNetwork(char* textFile){
 }
 
 /**
- * @brief 
+ * @brief Will add a car to the listOfCars private varaible.
  *
- * @details 
+ * @details Using standard STL vectors will push_back additional car variables
+ *			to the listOfCars private variable.
  *          
- * @pre 
+ * @pre listOfCars is created.
  *
- * @post 
+ * @post listOfCars adds one more "car" to its list.
  * 
- * @exception 
+ * @exception none.
  *
- * @param [in] 
+ * @param [in]  newCar
+ *			      New car vaible to be added to the listOfCars which all will be
+ *				  "diving" on the graph via dijkstra's algorithm.
  *
- * @return 
+ * @return void
  * 
  **/
 void MainNetwork::addCar( Car newCar ){
@@ -83,19 +89,23 @@ void MainNetwork::addCar( Car newCar ){
 }
 
 /**
- * @brief 
+ * @brief Prints out start and end values as well as begin dijkstras 
+ *		  calculations.
  *
- * @details 
+ * @details Using the already set listOfCars and graph calls dijkstras to find
+ *			the best path for the current car. Also prints our the start and end
+ *			values of the currentCar, and later prints the path the car will
+ *			take.
  *          
- * @pre 
+ * @pre Variables graph and listofCars have been created.
  *
- * @post 
+ * @post The paths each car in listOfCars will take for the entire program life.
  * 
- * @exception 
+ * @exception none
  *
- * @param [in] 
+ * @param [in] none
  *
- * @return 
+ * @return void
  * 
  **/
 void MainNetwork::sendPath(){
@@ -104,7 +114,8 @@ void MainNetwork::sendPath(){
 
 	for( int i  = 0; i < 1000; i++)
 	{
-		cout << "Source: " << listOfCars[i].source << " destination: " << listOfCars[i].destination << endl;
+		cout << "Source: " << listOfCars[i].source << " destination: " 
+											<< listOfCars[i].destination << endl;
 		dijkstra(listOfCars[i]);
 
 
@@ -127,38 +138,32 @@ void MainNetwork::sendPath(){
 		}
 
 
-		updatePath(listOfCars[i], false);
+		updatePath(listOfCars[i]);
 	}
 
-/*
-	//This is just for debugging purposes
-	for(int i = 0; i < 9; i++)
-	{
-		cout << "Path " << i << ": " << endl;
-		for(vector<int>::iterator iterate = paths[i].begin(); iterate != paths[i].end(); iterate++)
-		{
-			cout << *iterate << ' ';
-		}
-		cout << endl;
-	}
-*/
 }
 
 
 /**
- * @brief 
+ * @brief Help fucntion for dijkstra's algorithm.
  *
- * @details 
+ * @details Finds the minimum distance array for vertices that have not yet been
+ *			tested yet.
  *          
- * @pre 
+ * @pre sptSet values which have been seen are set to true, otherwise false.
  *
- * @post 
+ * @post returns the min_index which is used for boolean operation in 
+ *		 dijkstra.
  * 
- * @exception 
+ * @exception none
  *
- * @param [in] 
+ * @param [in] int dist[]
+ *			     array of distance values used for comparison.
+ *			   bool sptSet[]
+ *				 Array of bools which have been visited or no.
  *
- * @return 
+ * @return min_index which is the minimum index value used in the rows of the 
+ *		   columns.
  * 
  **/
 int MainNetwork::minDistance(int dist[], bool sptSet[]){
@@ -223,13 +228,6 @@ void MainNetwork::dijkstra(Car &currentCar)
 		// Pick the minimum distance vertex from the set of vertices not
 		// yet processed. u is always equal to src in first iteration.
 		int u = minDistance(dist, sptSet);
-		/*
-		for( int i = 0; i < 9; i++)
-		{
-			cout << dist[i].dist << "\t";
-		}
-		cout << endl;
-		*/
 		// Mark the picked vertex as processed
 		sptSet[u] = true;
 
@@ -263,22 +261,26 @@ void MainNetwork::dijkstra(Car &currentCar)
 }
 
 /**
- * @brief 
+ * @brief Updates the graph
  *
- * @details 
+ * @details Updates the graph with larger edges causing cars to take differnt
+ *			paths based on dijkstras newly updated graph edges.
  *          
- * @pre 
+ * @pre Already created graph, CurrentPath for currentCar created.
  *
- * @post 
+ * @post Updated graph with increased edges for the CurrentPath currentCar will
+ *				 take.
  * 
- * @exception 
+ * @exception none
  *
- * @param [in] 
+ * @param [in] Car CurrentCar
+ *				currentCar which is holding source, destination, and CurrentPath
+ *				whcih will updates the graph with larger edge values.
  *
- * @return 
+ * @return none
  * 
  **/
-void MainNetwork::updatePath(Car currentCar, bool newSource){
+void MainNetwork::updatePath(Car currentCar){
 	if( !currentCar.CurrentPath.empty() )
 	{
 		graph[currentCar.source][currentCar.CurrentPath[0]]++;
@@ -305,20 +307,3 @@ void MainNetwork::updatePath(Car currentCar, bool newSource){
 	}
 	
 }
-
-/**
- * @brief 
- *
- * @details 
- *          
- * @pre 
- *
- * @post 
- * 
- * @exception 
- *
- * @param [in] 
- *
- * @return 
- * 
- **/

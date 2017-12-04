@@ -5,8 +5,27 @@
 #include <time.h>
 
 using namespace std;
-
+/**
+ * @brief  main for program
+ *
+ * @details  Takes in file from command line, loops through statically choosen
+ *			 number of cars which will traverse the graph
+ * 
+ * @pre  Properly formated text file, in the form of a 2D array. 
+ *
+ * @post  full program ran, with activly changing edge values for car to take
+ * 
+ * @exception None.
+ *
+ * @param [in]  char* argv[]
+ *				  char pointer to array of chars containing command line 
+ *				  arguments
+ *
+ * @return return 0
+ * 
+ **/
 int main(int argc, char* argv[]){
+	
 	srand(time(NULL));
 	MainNetwork simulation(argv[1]);
 	Car testing;
@@ -19,18 +38,8 @@ int main(int argc, char* argv[]){
 		{
 			testing.destination = rand() % 8;
 		}
-		//cout << "From: " << testing.source << " To: " << testing.destination << endl;
 		simulation.addCar( testing );
-	}
-	/*
-	
-		testing.source = 6;
-		testing.destination = 7;
-		testing.crash = false;
-		testing.congested = false;
-		cout << "From: " << testing.source << " To: " << testing.destination << endl;
-		simulation.addCar( testing );
-	*/	
+	}	
 		simulation.sendPath();
 	
 
