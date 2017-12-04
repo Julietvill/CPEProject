@@ -1,24 +1,34 @@
+// Program Information ////////////////////////////////////////////////////////
+/**
+ * @file Graph.cpp
+ *
+ * @brief Implementation file for Graph
+ * 
+ * @details Implements all member functions of the Graph clas
+ *
+ * @version 1.00 
+ *          Juliet Villanueva, Casey Garrett, Aaron Dartt (3 December 2017)
+ *
+ * @Note requires BSTClass.h
+ */
+
+// Header files ///////////////////////////////////////////////////////////////
+
 #include "Graph.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <iostream>		
-#include <limits.h>		//creates really small numbers
-#include <time.h> 		//Keep track of cars and create random numbers
+#include <limits.h>		
+#include <time.h> 		
 
-#include <vector>		//To use Vectors
-#include <queue>		//To use Queues
+#include <vector>		
+#include <queue>		
 
 #include <fstream>
 
 using namespace std;
 
-//this is only being used for debugging purposes. Will remove later.
-void printSolution(int dist[], int n)
-{
-printf("Vertex Distance from Source\n");
-for (int i = 0; i < n; i++)
-	printf("%d tt %d\n", i, dist[i]);
-}
+
 /**
  * @brief 
  *
@@ -44,8 +54,7 @@ MainNetwork::MainNetwork(char* textFile){
 		{
 			for(int j = 0; j < 9; j++)
 			{
-				inFile >> graph[i][j].dist;
-				graph[i][j].carCount = 0;
+				inFile >> graph[i][j];
 			}
 		}
 
@@ -71,7 +80,6 @@ MainNetwork::MainNetwork(char* textFile){
  **/
 void MainNetwork::addCar( Car newCar ){
 	listOfCars.push_back( newCar );
-	sendPath( newCar );
 }
 
 /**
@@ -90,18 +98,37 @@ void MainNetwork::addCar( Car newCar ){
  * @return 
  * 
  **/
-void MainNetwork::sendPath(Car &workingCar ){
-	vector<int> paths[9];
+void MainNetwork::sendPath(){
+
 	int destination = -99;
 
-	dijkstra(paths, workingCar.source);
-	workingCar.CurrentPath = paths[workingCar.destination];
+	for( int i  = 0; i < 1000; i++)
+	{
+		cout << "Source: " << listOfCars[i].source << " destination: " << listOfCars[i].destination << endl;
+		dijkstra(listOfCars[i]);
 
-	if(workingCar.CurrentPath.empty())
-		destination = workingCar.destination;
-	else
-		destination = workingCar.CurrentPath.front();
-	updatePath(workingCar.source, destination, false);
+
+		if(listOfCars[i].CurrentPath.empty())
+		{
+			destination = listOfCars[i].destination;
+			cout << "Path: " << destination << endl;
+		}
+		else
+		{
+			destination = listOfCars[i].CurrentPath.front();
+			
+			cout << "Path: ";
+			for(unsigned int j = 0; j < listOfCars[i].CurrentPath.size(); j++)
+			{
+				cout << listOfCars[i].CurrentPath[j] << " ";
+			}
+			cout << endl;
+			
+		}
+
+
+		updatePath(listOfCars[i], false);
+	}
 
 /*
 	//This is just for debugging purposes
@@ -134,16 +161,15 @@ void MainNetwork::sendPath(Car &workingCar ){
  * @return 
  * 
  **/
-int MainNetwork::minDistance(Edges dist[], bool sptSet[]){
+int MainNetwork::minDistance(int dist[], bool sptSet[]){
 	// Initialize min value
 	int min = INT_MAX, min_index;
 
 	for (int v = 0; v < 9; v++)
 	{
-		if (sptSet[v] == false && dist[v].dist <= min 
-							   && dist[v].carCount < 9999)
+		if (sptSet[v] == false && dist[v] <= min )
 		{
-			min = dist[v].dist, min_index = v;
+			min = dist[v], min_index = v;
 		}
 	}
 	return min_index;
@@ -151,37 +177,45 @@ int MainNetwork::minDistance(Edges dist[], bool sptSet[]){
 
 
 /**
- * @brief 
+ * @brief Search algorithm
  *
- * @details 
+ * @details Finds the shortest path from the source to the destination
  *          
- * @pre 
+ * @pre There must be a graph that has data in it
  *
- * @post 
+ * @post Will find the shortest path from one vertex to the destination
+ * 		 The search algorithm uses the dijkstra's algorithm, which will
+ *		 find the shortest path to each vertex of the entire tree, given
+ *		 the source
  * 
- * @exception 
+ * @exception none
  *
- * @param [in] 
+ * @param [in] currentCar
+ *			   The current car that needs a path from its source to its
+ *			   destination 
  *
- * @return 
+ * @return none
+ *
+ * @note the dijkstra's algorithm uses the minDistance function, to
+ * 		 determine the minimun distance from the current vetex it is at.
  * 
  **/
-void MainNetwork::dijkstra(vector<int> paths[9], int src)
+void MainNetwork::dijkstra(Car &currentCar)
 {
-	Edges dist[9];
+	vector<int> paths[9];
+	int dist[9];
 	bool sptSet[9]; // sptSet[i] will true if vertex i is included in shortest
 					// path tree or shortest distance from src to i is finalized
 
 	// Initialize all distances as INFINITE and stpSet[] as false
 	for (int i = 0; i < 9; i++)
 	{
-		dist[i].dist = INT_MAX;
-		dist[i].carCount = 0;
+		dist[i] = INT_MAX;
 		sptSet[i] = false;
 	}
 
 	// Distance of source vertex from itself is always 0
-	dist[src].dist = 0;
+	dist[currentCar.source] = 0;
 
 	// Find shortest path for all vertices
 	for (int count = 0; count < 9-1; count++)
@@ -206,19 +240,18 @@ void MainNetwork::dijkstra(vector<int> paths[9], int src)
 			// Update dist[v] only if is not in sptSet, there is an edge from 
 			// u to v, and total weight of path from src to v through u is 
 			// smaller than current value of dist[v]
-			if (!sptSet[v] && graph[u][v].dist 
-						   && dist[u].dist != INT_MAX 
-						   && dist[u].dist+graph[u][v].dist < dist[v].dist)
+			if (!sptSet[v] && graph[u][v]
+						   && dist[u] != INT_MAX 
+						   && dist[u]+graph[u][v] < dist[v])
 			{
-				dist[v].dist = dist[u].dist + graph[u][v].dist;
-				dist[v].carCount = graph[u][v].carCount;
+				dist[v] = dist[u] + graph[u][v];
 
-				if( graph[u][src].dist == 0 && u != src)
+				if( graph[u][currentCar.source] == 0 && u != currentCar.source)
 				{
 					paths[v] = paths[u];
 				}
 
-				if( u != src)
+				if( u != currentCar.source)
 				{
 
 					paths[v].push_back( u );
@@ -226,6 +259,7 @@ void MainNetwork::dijkstra(vector<int> paths[9], int src)
 			}
 		}
 	}
+	currentCar.CurrentPath = paths[currentCar.destination];
 }
 
 /**
@@ -244,26 +278,32 @@ void MainNetwork::dijkstra(vector<int> paths[9], int src)
  * @return 
  * 
  **/
-void MainNetwork::updatePath(int source, int dest, bool newSource){
-	if( !newSource )
+void MainNetwork::updatePath(Car currentCar, bool newSource){
+	if( !currentCar.CurrentPath.empty() )
 	{
-		graph[source][dest].carCount++;
-		graph[dest][source].carCount++;
+		graph[currentCar.source][currentCar.CurrentPath[0]]++;
+		graph[currentCar.CurrentPath[0]][currentCar.source]++;
+		for( unsigned int i = 0; i < currentCar.CurrentPath.size() - 1; i++)
+		{
+			graph[currentCar.CurrentPath[i]][currentCar.CurrentPath[i+1]]++;
+			graph[currentCar.CurrentPath[i+1]][currentCar.CurrentPath[i]]++;
+		}
+		graph[currentCar.CurrentPath[currentCar.CurrentPath.size() - 1]][currentCar.destination]++;
+		graph[currentCar.destination][currentCar.CurrentPath[currentCar.CurrentPath.size() - 1]]++;
 	}
 	else
 	{
-		graph[source][dest].carCount--;
-		graph[dest][source].carCount--;
+		graph[currentCar.source][currentCar.destination]++;
 	}
-
 	for( int i = 0; i < 9; i++)
 	{
 		for( int j = 0; j < 9; j++)
 		{
-			cout << "<" << graph[i][j].dist << "," << graph[i][j].carCount << ">  ";
+			cout << graph[i][j] << " ";
 		}
 		cout << endl;
 	}
+	
 }
 
 /**
@@ -282,6 +322,3 @@ void MainNetwork::updatePath(int source, int dest, bool newSource){
  * @return 
  * 
  **/
-void MainNetwork::updateSource(){
-
-}
