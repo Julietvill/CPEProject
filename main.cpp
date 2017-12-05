@@ -32,15 +32,15 @@ int main(int argc, char* argv[]){
 
 	for( int i = 0; i < 1000; i++)
 	{
-		testing.source = rand() % 8;
-		testing.destination = rand() % 8;
+		testing.source = rand() % simulation.getSize();
+		testing.destination = rand() % simulation.getSize();
 		while( testing.source == testing.destination)
 		{
-			testing.destination = rand() % 8;
+			testing.destination = rand() % simulation.getSize();
 		}
 		simulation.addCar( testing );
 	}	
-		simulation.sendPath();
+	simulation.sendPath();
 	
 
 	return 0;

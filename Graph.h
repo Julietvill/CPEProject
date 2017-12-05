@@ -20,15 +20,18 @@ struct Car{
 class MainNetwork{
 
 	public:
-		MainNetwork(char* fileName); //this will create the graph
-		void addCar( Car newCar );	 //to add cars to the private variable listOfCars
-		void sendPath( );			 //To get the path for the car to take
-		void updatePath(Car currentCar); //updates the graph 
-			//with larger edge values based on the path previous cars will take
+		MainNetwork(char* fileName); 		//this will create the graph
+		~MainNetwork();
+		void addCar( Car newCar );	 		//to add cars to the private variable listOfCars
+		void sendPath( );					//To get the path for the car to take
+		void updatePath(Car currentCar); 	//updates the graph 
+											//with larger edge values based on the path previous cars will take
+		int getSize();						//retruns the size of the graph, to create random data
 
 
 	private:
-		int graph[9][9];		//Current static graph as our "MAP/GPS" for the cars
+		int size;				//the size of the graph
+		int **graph;			//Current static graph as our "MAP/GPS" for the cars
 		vector<Car> listOfCars; //List of cars that are entering the graph
 
 		int minDistance(int dist[9], bool sptSet[9]);//dijkstras helper function

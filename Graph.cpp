@@ -50,12 +50,18 @@ using namespace std;
  **/
 MainNetwork::MainNetwork(char* textFile){
 	ifstream inFile(textFile);
-	
+	inFile >> size;
+	cout << size << endl;
+	graph = new int*[size];
+	for( int i = 0; i < size; i++)
+		graph[i] = new int[size];
+
 	while( !inFile.eof() )
 	{
-		for( int i = 0; i < 9; i++)
+		
+		for( int i = 0; i < size; i++)
 		{
-			for(int j = 0; j < 9; j++)
+			for(int j = 0; j < size; j++)
 			{
 				inFile >> graph[i][j];
 			}
@@ -63,6 +69,59 @@ MainNetwork::MainNetwork(char* textFile){
 
 	}
 	inFile.close();
+/*
+	for( int i = 0; i < size; i++)
+	{
+		for(int j = 0; j < size; j++)
+			cout << graph[i][j] << " ";
+		cout << endl;	
+	}
+*/
+}
+
+/**
+ * @brief Destructor
+ *
+ * @details Deletes the graph to ensure that there are no memory leaks
+ *          
+ * @pre Graph has been created.
+ *
+ * @post Deletes the graph
+ * 
+ * @exception none
+ *
+ * @param [in] none
+ *
+ * @return void
+ * 
+ **/
+MainNetwork::~MainNetwork(){
+	if( graph != NULL )
+	{
+		for(int i = 0; i < size; i++)
+			delete[] graph[i];
+		delete[] graph;
+	}
+}
+
+/**
+ * @brief retruns the sieze of the graph
+ *
+ * @details returns the size of the graph
+ *          
+ * @pre graph has been created.
+ *
+ * @post returns the size of the graph
+ * 
+ * @exception none
+ *
+ * @param [in] none
+ *
+ * @return int- the size of the graph
+ * 
+ **/
+int MainNetwork::getSize(){
+	return size;
 }
 
 /**
@@ -170,7 +229,7 @@ int MainNetwork::minDistance(int dist[], bool sptSet[]){
 	// Initialize min value
 	int min = INT_MAX, min_index;
 
-	for (int v = 0; v < 9; v++)
+	for (int v = 0; v < size; v++)
 	{
 		if (sptSet[v] == false && dist[v] <= min )
 		{
@@ -207,13 +266,13 @@ int MainNetwork::minDistance(int dist[], bool sptSet[]){
  **/
 void MainNetwork::dijkstra(Car &currentCar)
 {
-	vector<int> paths[9];
-	int dist[9];
-	bool sptSet[9]; // sptSet[i] will true if vertex i is included in shortest
+	vector<int> paths[size];
+	int dist[size];
+	bool sptSet[size]; // sptSet[i] will true if vertex i is included in shortest
 					// path tree or shortest distance from src to i is finalized
 
 	// Initialize all distances as INFINITE and stpSet[] as false
-	for (int i = 0; i < 9; i++)
+	for (int i = 0; i < size; i++)
 	{
 		dist[i] = INT_MAX;
 		sptSet[i] = false;
@@ -223,7 +282,7 @@ void MainNetwork::dijkstra(Car &currentCar)
 	dist[currentCar.source] = 0;
 
 	// Find shortest path for all vertices
-	for (int count = 0; count < 9-1; count++)
+	for (int count = 0; count < size-1; count++)
 	{
 		// Pick the minimum distance vertex from the set of vertices not
 		// yet processed. u is always equal to src in first iteration.
@@ -232,7 +291,7 @@ void MainNetwork::dijkstra(Car &currentCar)
 		sptSet[u] = true;
 
 		// Update dist value of the adjacent vertices of the picked vertex.
-		for (int v = 0; v < 9; v++)
+		for (int v = 0; v < size; v++)
 		{
 
 			// Update dist[v] only if is not in sptSet, there is an edge from 
@@ -297,13 +356,15 @@ void MainNetwork::updatePath(Car currentCar){
 	{
 		graph[currentCar.source][currentCar.destination]++;
 	}
-	for( int i = 0; i < 9; i++)
+	/*
+	for( int i = 0; i < size; i++)
 	{
-		for( int j = 0; j < 9; j++)
+		for( int j = 0; j < size; j++)
 		{
 			cout << graph[i][j] << " ";
 		}
 		cout << endl;
 	}
+	*/
 	
 }
