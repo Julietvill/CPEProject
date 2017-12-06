@@ -171,7 +171,7 @@ void MainNetwork::sendPath(){
 
 	int destination = -99;
 
-	for( int i  = 0; i < 1000; i++)
+	for( unsigned int i  = 0; i < listOfCars.size(); i++)
 	{
 		cout << "Source: " << listOfCars[i].source << " destination: " 
 											<< listOfCars[i].destination << endl;
@@ -303,7 +303,7 @@ void MainNetwork::dijkstra(Car &currentCar)
 			{
 				dist[v] = dist[u] + graph[u][v];
 
-				if( graph[u][currentCar.source] == 0 && u != currentCar.source)
+				if( (graph[u][currentCar.source] == 0 || graph[v][currentCar.source] == 0) && u != currentCar.source)
 				{
 					paths[v] = paths[u];
 				}
