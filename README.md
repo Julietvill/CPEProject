@@ -1,5 +1,5 @@
 CPE400_Project
-This project will simulate a car re-routing due to congestion within the graph. The reserved program will reserve the entire path that the car is going to take and then recalculate the path after the car reaches each new vertex. The nonresevered program, will only reserve the current edge that the car is going to take and not the entire path. The path's are also re-calcualted once the car reaches each vertex.
+This project will simulate a car re-routing due to congestion within the graph. There are two programs, the simulation will be run on both programs to compare the two. The reserved program will reserve the entire path that the car is going to take and then recalculate the path after the car reaches each new vertex. The nonresevered program, will only reserve the current edge that the car is going to take and not the entire path. The path's are also re-calcualted in this program once the car reaches each vertex.
 Functions:
 dijkstra()
 This function is the dijkstra's algorithm. It will find the shortest path to each vertex within the graph.
