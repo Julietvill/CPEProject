@@ -1,16 +1,15 @@
-In order to run the code, you need to have the .txt file, which holds the edges for the graph.
-Include the .txt file in the command line. So the code should be run as follows: ./CPE400 fileName.txt.
+CPE400_Project
+This project will simulate a car re-routing due to congestion within the graph. The reserved program will reserve the entire path that the car is going to take. The unresevered program, will re-calcuate the path every time a car reaches a vertex.
+Functions:
+dijkstra()
+This function is the dijkstra's algorithm. It will find the shortest path to each vertex within the graph.
+sendPath()
+The sendPath fucntion will send the shortest path to the car and will update the path based on the new vertex that the car is located at.
+It will also be the function that reroutes the car if a new path is shorter or faster then it's previous path.
+updatePath()
+This function will update the time variable within the car struct
 
-Once the code has been run, then the file will be loaded into an adjacency matrix for the program.
-The adjacency matrix represents the length of time it takes to reach one vertex from another.
-There is zero time for the vetices that are not directly connected, since they cannot be reached unless
-you travel through another vertex. The main function will randomly generate a number of "cars", which for
-our simulation represents,the cars that are going to be re-routed in the case of congestion. These cars
-are loaded into a vector within the mainNetwork class. After all the cars have been pushed into the
-vector, the main function will run the sendPath function in the mainNetwork. This will loop through
-each of the cars that are in the vector and find the shortest path from their source to destination.
-Each car will decide the best path to take based on the edges using dijkstra's algorithm. Dijkstra's 
-algorithm finds the shortest path to each vertex given a source. Once the shorest path to the destination
-vetrex is know, that path is given to the car and that path's weight will increase, simulating more time
-when more cars are added to that edge. When the edges increase, then other edges become more practical to
-take, which simulates the re-routing for cars due to congestion.
+Running the code
+The reserved program will be run: ./Reserved fileName.txt
+The nonreserved program will be run: ./NonReserved fileName.txt
+In order to run each test, you will need to replace fileName.txt with: test.txt test2.txt test3.txt test4.txt test5.txt
